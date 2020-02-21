@@ -1,5 +1,5 @@
 import React from 'react';
-const BASE_URL        = 'https://localhost:44362/api/';
+const BASE_URL        = 'https://localhost:5001/api/';
 
 const AUTH_TOKEN = "auth_token";
 
@@ -143,5 +143,4 @@ class App extends React.Component {
         )
     }
 }
-
 export default App;
