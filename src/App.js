@@ -7,7 +7,8 @@ class App extends React.Component {
         super();
         this.state  = {
           todos : [],
-          singleTodo:{}
+          singleTodo:{},
+          lastSearched:{}
         };
         this.getAll = this.getAll.bind(this);
         this.submitToDo = this.submitToDo.bind(this);
@@ -20,6 +21,18 @@ class App extends React.Component {
     }
 
     getAll() {    
+         // Read from cache by key.
+         let cachedItem = sessionStorage.getItem("MY_KEY");
+
+         // As long as something was in the cache…
+         if(cachedItem != null) {
+         // Convert string back to JavaScript object.
+         let cachedObj  = JSON.parse(cachedItem);
+   
+       // Store object on the state.
+       this.setState({lastSearched:cachedObj});
+       }
+
         const URL        = BASE_URL + 'todo';
         // This code gets data from the remote server.
         fetch(URL).then(response => response.json())
@@ -130,6 +143,10 @@ getTodo(e) {
       .then(response => response.json())
           // Data retrieved.
           .then(json => {
+            let strJSON = JSON.stringify(json);
+            // Store string in cache.
+            sessionStorage.setItem("MY_KEY", strJSON);  
+            this.getAll(); // Refresh list and label.
               alert(JSON.stringify(json));
               this.setState({singleTodo : json});
           })
@@ -163,8 +180,14 @@ getTodo(e) {
             {this.state.singleTodo.id} {this.state.singleTodo.description} 
             { this.state.singleTodo.isComplete ?  ' - Completed.': '' }    
             { this.state.singleTodo.isComplete==false ?  ' - Not completed.':'' } 
+
+            <br/><br/>
+            <b>Last Searched</b><br/>
+            {this.state.lastSearched.id?this.state.lastSearched.id:""} &nbps;&nbsp;
+            {this.state.lastSearched.description?this.state.lastSearched.description:""}
             </div>     
         )
     }
 }
+
 export default App;
